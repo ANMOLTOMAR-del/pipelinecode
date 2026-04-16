@@ -3,33 +3,27 @@ pipeline {
 
     stages {
 
-        stage('Clone Repository') {
-            steps {
-                git 'YOUR_GITHUB_REPO_URL'
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'npm test'
+                bat 'npm test'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Build step (for Node.js usually nothing special)'
+                echo 'No build step required for Node.js'
             }
         }
 
         stage('Run App') {
             steps {
-                sh 'nohup node app.js &'
+                bat 'start /B node app.js'
             }
         }
     }
