@@ -21,10 +21,29 @@ pipeline {
             }
         }
 
+        stage('Use Secret') {
+            steps {
+                withCredentials([string(credentialsId: 'my-secret-token', variable: 'TOKEN')]) {
+                    bat 'echo Secret token loaded successfully'
+                    bat 'echo %TOKEN%'
+                }
+            }
+        }
+
         stage('Run App') {
             steps {
                 bat 'start /B node app.js'
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline executed successfully'
+        }
+
+        failure {
+            echo 'Pipeline failed'
         }
     }
 }
