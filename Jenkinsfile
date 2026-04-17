@@ -15,15 +15,30 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Deploy DEV') {
+            when {
+                branch 'dev'
+            }
             steps {
-                echo 'No build step required for Node.js'
+                echo 'Deploying to DEV environment'
             }
         }
 
-        stage('Run App') {
+        stage('Deploy QA') {
+            when {
+                branch 'qa'
+            }
             steps {
-                bat 'start /B node app.js'
+                echo 'Deploying to QA environment'
+            }
+        }
+
+        stage('Deploy PROD') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo 'Deploying to PRODUCTION environment'
             }
         }
     }
