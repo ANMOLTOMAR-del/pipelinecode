@@ -15,31 +15,23 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
-                echo 'No build step required for Node.js'
+                bat 'docker build -t pipelinecode-app .'
             }
         }
 
-        stage('Use Secret') {
+        stage('Run Docker Container') {
             steps {
-                withCredentials([string(credentialsId: 'my-secret-token', variable: 'TOKEN')]) {
-                    bat 'echo Secret token loaded successfully'
-                    bat 'echo %TOKEN%'
-                }
-            }
-        }
-
-        stage('Run App') {
-            steps {
-                bat 'start /B node app.js'
+                bat 'docker rm -f pipelinecode-container || exit 0'
+                bat 'docker run -d -p 3000:3000 --name pipelinecode-container pipelinecode-app'
             }
         }
     }
 
     post {
         success {
-            echo 'Pipeline executed successfully'
+            echo 'Docker pipeline executed successfully'
         }
 
         failure {
