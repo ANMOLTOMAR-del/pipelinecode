@@ -17,21 +17,29 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t pipelinecode-app .'
+                bat 'docker build -t tomaranmol1807/pipelinecode-app:latest .'
             }
         }
 
-        stage('Run Docker Container') {
+        stage('DockerHub Login') {
             steps {
-                bat 'docker rm -f pipelinecode-container || exit 0'
-                bat 'docker run -d -p 3000:3000 --name pipelinecode-container pipelinecode-app'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    bat 'docker login -u %DOCKER_USER% -p %DOCKER_PASS%'
+                }
             }
         }
+
+        stage('Push Image') {
+            steps {
+                bat 'docker push tomaranmol1807/pipelinecode-app:latest'
+            }
+        }
+
     }
 
     post {
         success {
-            echo 'Docker pipeline executed successfully'
+            echo 'Image pushed to DockerHub successfully'
         }
 
         failure {
